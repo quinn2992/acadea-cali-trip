@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>California CS Visit Trip — April 2025</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root {
+  --bg:#0f1318; --surface:#161c24; --surface2:#1d2530; --border:#2a3340;
+  --high:#e05252; --medium:#e8944a; --low:#4caf7d;
+  --accent:#5b9bd5; --accent2:#7ec8e3;
+  --text:#dde4ed; --muted:#7a8a9e; --faint:#3a4555;
+  --drive:#c9a227;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;height:100vh;}
+
+/* HEADER */
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:stretch;flex-shrink:0;}
+.header-brand{display:flex;flex-direction:column;justify-content:center;padding:12px 0;margin-right:28px;}
+.header-brand h1{font-family:'Libre Baskerville',serif;font-size:1.05rem;letter-spacing:-0.01em;}
+.header-brand p{font-size:0.68rem;color:var(--muted);margin-top:3px;}
+.tabs{display:flex;align-items:stretch;}
+.tab-btn{background:none;border:none;border-bottom:3px solid transparent;color:var(--muted);font-family:'IBM Plex Sans',sans-serif;font-size:0.78rem;font-weight:500;padding:0 18px;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.tab-btn:hover{color:var(--text);}
+.tab-btn.active{color:var(--accent2);border-bottom-color:var(--accent2);}
+.header-legend{margin-left:auto;display:flex;align-items:center;gap:16px;}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:0.7rem;color:var(--muted);font-weight:500;}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.dot.High{background:var(--high);box-shadow:0 0 4px var(--high);}
+.dot.Medium{background:var(--medium);box-shadow:0 0 4px var(--medium);}
+.dot.Low{background:var(--low);box-shadow:0 0 4px var(--low);}
+
+/* TAB PANELS */
+.tab-panel{display:none;flex:1;overflow:hidden;}
+.tab-panel.active{display:flex;}
+
+/* ── MAP TAB ── */
+#tab-map{position:relative;}
+#map{flex:1;height:100%;}
+.map-sidebar{width:285px;background:var(--surface);border-left:1px solid var(--border);overflow-y:auto;flex-shrink:0;}
+.map-sidebar::-webkit-scrollbar{width:3px;}
+.map-sidebar::-webkit-scrollbar-thumb{background:var(--border);}
+.day-card{padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;border-left:3px solid transparent;}
+.day-card:hover{background:rgba(91,155,213,.05);}
+.day-card.active{background:rgba(91,155,213,.08);border-left-color:var(--accent);}
+.day-card-header{display:flex;align-items:baseline;gap:9px;margin-bottom:7px;}
+.day-num{font-family:'Libre Baskerville',serif;font-size:1.4rem;color:var(--accent);line-height:1;min-width:24px;}
+.day-meta h4{font-size:0.76rem;font-weight:600;color:var(--text);}
+.day-meta p{font-size:0.66rem;color:var(--muted);margin-top:1px;}
+.school-chips{display:flex;flex-direction:column;gap:3px;}
+.chip{display:flex;align-items:center;gap:6px;padding:3px 6px;border-radius:4px;background:rgba(255,255,255,.03);font-size:0.68rem;color:var(--text);}
+.chip-type{margin-left:auto;font-size:0.6rem;color:var(--muted);font-style:italic;white-space:nowrap;}
+
+/* ── TABLE TAB ── */
+#tab-table{flex-direction:column;overflow:hidden;}
+.table-toolbar{padding:12px 22px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;flex-shrink:0;}
+.table-toolbar input{background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:0.76rem;padding:6px 11px;width:240px;outline:none;transition:border-color .15s;}
+.table-toolbar input:focus{border-color:var(--accent);}
+.table-toolbar input::placeholder{color:var(--faint);}
+.filter-group{display:flex;gap:5px;}
+.filter-btn{background:var(--surface2);border:1px solid var(--border);border-radius:20px;color:var(--muted);font-family:'IBM Plex Sans',sans-serif;font-size:0.68rem;font-weight:500;padding:4px 11px;cursor:pointer;transition:all .12s;}
+.filter-btn:hover{border-color:var(--accent);color:var(--text);}
+.filter-btn.on-all{border-color:var(--accent);color:var(--accent);background:rgba(91,155,213,.08);}
+.filter-btn.on-High{border-color:var(--high);color:var(--high);background:rgba(224,82,82,.08);}
+.filter-btn.on-Medium{border-color:var(--medium);color:var(--medium);background:rgba(232,148,74,.08);}
+.filter-btn.on-Low{border-color:var(--low);color:var(--low);background:rgba(76,175,125,.08);}
+.table-count{margin-left:auto;font-size:0.7rem;color:var(--muted);}
+.table-wrap{flex:1;overflow:auto;padding:0 22px 22px;}
+.table-wrap::-webkit-scrollbar{width:4px;height:4px;}
+.table-wrap::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+table{width:100%;border-collapse:collapse;margin-top:14px;font-size:0.76rem;}
+thead tr{background:var(--surface);position:sticky;top:0;z-index:2;}
+th{padding:9px 13px;text-align:left;font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);border-bottom:1px solid var(--border);cursor:pointer;user-select:none;white-space:nowrap;}
+th:hover{color:var(--text);}
+th.sorted .sort-icon{opacity:1;color:var(--accent);}
+.sort-icon{margin-left:4px;opacity:.3;}
+td{padding:8px 13px;border-bottom:1px solid rgba(42,51,64,.5);vertical-align:middle;}
+tr:hover td{background:rgba(255,255,255,.02);}
+.pri-badge{display:inline-flex;align-items:center;gap:4px;font-size:0.65rem;font-weight:600;padding:2px 8px;border-radius:20px;}
+.pri-badge.High{background:rgba(224,82,82,.15);color:var(--high);}
+.pri-badge.Medium{background:rgba(232,148,74,.15);color:var(--medium);}
+.pri-badge.Low{background:rgba(76,175,125,.15);color:var(--low);}
+.day-badge{background:rgba(91,155,213,.12);color:var(--accent);font-size:0.65rem;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap;}
+.not-scheduled{color:var(--faint);font-style:italic;font-size:0.68rem;}
+.visit-note{font-size:0.65rem;color:var(--muted);}
+
+/* ── ITINERARY TAB ── */
+#tab-itinerary{overflow-y:auto;padding:28px 0;flex-direction:column;align-items:center;}
+#tab-itinerary::-webkit-scrollbar{width:4px;}
+#tab-itinerary::-webkit-scrollbar-thumb{background:var(--border);}
+.itin-inner{width:100%;max-width:780px;padding:0 28px;}
+.itin-intro{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:24px;}
+.itin-intro h2{font-family:'Libre Baskerville',serif;font-size:1.15rem;color:var(--text);margin-bottom:8px;}
+.itin-intro p{font-size:0.78rem;color:var(--muted);line-height:1.7;}
+.itin-stats{display:flex;gap:20px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);}
+.itin-stat{text-align:center;}
+.itin-stat-num{font-family:'Libre Baskerville',serif;font-size:1.5rem;color:var(--accent2);}
+.itin-stat-label{font-size:0.62rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-top:2px;}
+.notice-box{background:rgba(201,162,39,.07);border:1px solid rgba(201,162,39,.25);border-radius:8px;padding:12px 18px;margin-bottom:20px;font-size:0.74rem;color:var(--drive);line-height:1.6;}
+.notice-box strong{font-weight:600;}
+.optional-box{background:rgba(232,148,74,.06);border:1px dashed rgba(232,148,74,.4);border-radius:10px;overflow:hidden;margin-bottom:20px;}
+.optional-header{background:rgba(232,148,74,.1);padding:10px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px dashed rgba(232,148,74,.3);}
+.optional-badge{background:rgba(232,148,74,.2);color:var(--medium);font-size:0.65rem;font-weight:700;padding:2px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;}
+.optional-title{font-size:0.86rem;font-weight:600;color:var(--medium);}
+.optional-subtitle{font-size:0.72rem;color:rgba(232,148,74,.7);margin-top:2px;}
+.optional-note{padding:10px 20px 12px;font-size:0.72rem;color:rgba(232,148,74,.65);font-style:italic;line-height:1.6;}
+
+/* Day block */
+.day-block{margin-bottom:20px;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.day-block-header{padding:14px 20px;background:var(--surface);display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--border);}
+.day-block-num{font-family:'Libre Baskerville',serif;font-size:1.8rem;color:var(--accent);line-height:1;min-width:32px;}
+.day-block-info h3{font-size:0.86rem;font-weight:600;color:var(--text);}
+.day-block-info p{font-size:0.72rem;color:var(--muted);margin-top:2px;line-height:1.5;}
+
+/* Timeline rows */
+.timeline{padding:8px 0;}
+.tl-row{display:grid;grid-template-columns:75px 1fr;align-items:start;padding:0 20px;}
+.tl-row+.tl-row{margin-top:0;}
+
+/* Meeting row */
+.tl-row.meeting{padding-top:10px;padding-bottom:10px;}
+.tl-row.meeting:not(:last-of-type){border-bottom:1px dashed rgba(42,51,64,.6);}
+.tl-time{font-size:0.7rem;font-weight:600;color:var(--muted);padding-top:3px;white-space:nowrap;}
+.tl-content{display:flex;flex-direction:column;gap:3px;}
+.tl-name{font-size:0.8rem;font-weight:500;color:var(--text);}
+.tl-name small{font-size:0.67rem;color:var(--muted);font-weight:400;margin-left:6px;}
+.tl-meta{display:flex;align-items:center;gap:8px;}
+
+/* Drive row */
+.tl-row.drive{padding-top:6px;padding-bottom:6px;background:rgba(201,162,39,.04);}
+.tl-row.drive .tl-time{color:var(--drive);font-size:0.65rem;}
+.drive-info{display:flex;align-items:center;gap:8px;font-size:0.72rem;color:var(--drive);}
+.drive-arrow{font-size:0.78rem;opacity:.7;}
+.drive-detail{font-size:0.67rem;color:rgba(201,162,39,.6);}
+
+/* Overnight row */
+.tl-row.overnight{padding-top:8px;padding-bottom:10px;background:rgba(255,255,255,.02);}
+.tl-row.overnight .tl-time{font-size:0.65rem;color:var(--faint);}
+.overnight-info{font-size:0.72rem;color:var(--faint);font-style:italic;}
+
+/* Popup */
+.leaflet-popup-content-wrapper{background:var(--surface)!important;border:1px solid var(--border)!important;border-radius:8px!important;box-shadow:0 8px 24px rgba(0,0,0,.7)!important;color:var(--text)!important;}
+.leaflet-popup-tip{background:var(--surface)!important;}
+.leaflet-popup-close-button{color:var(--muted)!important;top:6px!important;right:8px!important;}
+.popup-name{font-family:'Libre Baskerville',serif;font-size:.88rem;margin-bottom:5px;}
+.popup-day{font-size:.68rem;color:var(--muted);margin-top:4px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-brand">
+    <h1>California Customer Visit Trip</h1>
+    <p>April 14–18, 2025 &nbsp;·&nbsp; Arrive SFO &nbsp;·&nbsp; Depart LAX &nbsp;·&nbsp; Mon–Fri &nbsp;·&nbsp; <span style="color:var(--medium);">+ Optional Day 6 (Mon Apr 21)</span></p>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="map">🗺&nbsp; Map</button>
+    <button class="tab-btn" data-tab="table">📋&nbsp; Accounts</button>
+    <button class="tab-btn" data-tab="itinerary">📅&nbsp; Itinerary</button>
+  </div>
+  <div class="header-legend">
+    <div class="legend-item"><div class="dot High"></div>High — EBR</div>
+    <div class="legend-item"><div class="dot Medium"></div>Medium — Check-in</div>
+    <div class="legend-item"><div class="dot Low"></div>Low — Check-in</div>
+  </div>
+</header>
+
+<div class="tab-panel active" id="tab-map">
+  <div id="map"></div>
+  <div class="map-sidebar" id="map-sidebar"></div>
+</div>
+
+<div class="tab-panel" id="tab-table">
+  <div class="table-toolbar">
+    <input type="text" id="search-input" placeholder="Search school name…">
+    <div class="filter-group">
+      <button class="filter-btn on-all" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="High">High</button>
+      <button class="filter-btn" data-filter="Medium">Medium</button>
+      <button class="filter-btn" data-filter="Low">Low</button>
+    </div>
+    <div class="table-count" id="table-count"></div>
+  </div>
+  <div class="table-wrap">
+    <table id="accounts-table">
+      <thead>
+        <tr>
+          <th data-col="name">School Name <span class="sort-icon">↕</span></th>
+          <th data-col="priority">Priority <span class="sort-icon">↕</span></th>
+          <th data-col="day">Visit Day <span class="sort-icon">↕</span></th>
+          <th data-col="meeting">Meeting Type <span class="sort-icon">↕</span></th>
+          <th data-col="region">Region <span class="sort-icon">↕</span></th>
+          <th data-col="tag">Tag <span class="sort-icon">↕</span></th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="tab-panel" id="tab-itinerary">
+  <div class="itin-inner" id="itin-inner"></div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// DATA
+// ─────────────────────────────────────────────────────────────────────────────
+
+const DAYS = [
+  {
+    day:1, date:"Mon, Apr 14", region:"Bay Area — Peninsula & East Bay",
+    optional:false,
+    summary:"Light arrival day. Land SFO from HCMC off overnight flight. One EBR on the Peninsula, then two East Bay check-ins with comfortable buffers between each.",
+    night:"Drive to San Jose (~45 min). Overnight San Jose.",
+    timeline:[
+      {type:"drive", from:"SFO Airport", to:"College of San Mateo", duration:"20 min", via:"US-101 S", arriveTime:"9:10 AM"},
+      {type:"meeting", time:"9:30 AM", endTime:"11:30 AM", name:"College of San Mateo", priority:"High", meeting:"Executive Business Review", tag:"Competitive Threat", lat:37.5630, lng:-122.3296},
+      {type:"drive", from:"College of San Mateo", to:"Chabot College (Hayward)", duration:"30 min + 30 min buffer", via:"US-101 N → I-880 S", arriveTime:"12:00–12:30 PM"},
+      {type:"meeting", time:"12:30 PM", endTime:"1:30 PM", name:"Chabot College", priority:"Medium", meeting:"1-hr Check-in", tag:"Upsell", lat:37.6879, lng:-122.0582},
+      {type:"drive", from:"Chabot College", to:"Las Positas College (Livermore)", duration:"25 min + 20 min buffer", via:"I-580 E", arriveTime:"~2:15 PM"},
+      {type:"meeting", time:"2:15 PM", endTime:"3:15 PM", name:"Las Positas College", priority:"Medium", meeting:"1-hr Check-in", tag:"Upsell", lat:37.7020, lng:-121.7680},
+      {type:"drive", from:"Las Positas", to:"San Jose (hotel)", duration:"35 min", via:"I-680 S", arriveTime:"~3:50 PM"},
+      {type:"overnight", note:"Overnight San Jose — position for back-to-back South Bay EBRs tomorrow."},
+    ]
+  },
+  {
+    day:2, date:"Tue, Apr 15", region:"South Bay — San Jose",
+    optional:false,
+    summary:"Two back-to-back EBRs — San Jose City and Evergreen Valley are 10 minutes apart, giving a natural built-in break between them. Gavilan in Gilroy is a relaxed afternoon check-in on the drive south.",
+    night:"Drive south to Fresno (2.5 hrs). Overnight Fresno.",
+    timeline:[
+      {type:"meeting", time:"9:00 AM", endTime:"11:00 AM", name:"San Jose City College", priority:"High", meeting:"Executive Business Review", tag:"Competitive Threat", lat:37.3352, lng:-121.8897},
+      {type:"drive", from:"San Jose City College", to:"Evergreen Valley College", duration:"15 min + 30 min break", via:"US-101 S → Capitol Expy", arriveTime:"11:45 AM"},
+      {type:"meeting", time:"11:45 AM", endTime:"1:45 PM", name:"Evergreen Valley College", priority:"High", meeting:"Executive Business Review", tag:"Competitive Threat", lat:37.3337, lng:-121.8063},
+      {type:"drive", from:"Evergreen Valley College", to:"Gavilan College (Gilroy)", duration:"40 min + 20 min buffer", via:"US-101 S", arriveTime:"~2:45 PM"},
+      {type:"meeting", time:"2:45 PM", endTime:"3:45 PM", name:"Gavilan College", priority:"Medium", meeting:"1-hr Check-in", tag:"2027 Renewal", lat:37.0046, lng:-121.5655},
+      {type:"drive", from:"Gavilan College", to:"Fresno hotel", duration:"2 hrs 30 min", via:"US-101 S → CA-25 → CA-198 E", arriveTime:"~6:15 PM"},
+      {type:"overnight", note:"Overnight Fresno — positioned for East Bay and Central Valley on Day 3."},
+    ]
+  },
+  {
+    day:3, date:"Wed, Apr 16", region:"East Bay → Central Valley",
+    optional:false,
+    summary:"Early start required — drive north to Oakland for the Peralta District consolidated meeting (4 medium accounts, 1 session), then drive south through the Central Valley. Madera is the last stop before returning to Fresno.",
+    night:"Return to Fresno (~20 min). Overnight Fresno — Clovis is 15 min away for an 8:30 AM start.",
+    timeline:[
+      {type:"drive", from:"Fresno hotel", to:"Peralta District HQ (Oakland)", duration:"2 hrs 45 min", via:"CA-99 N → I-580 W", arriveTime:"~8:45 AM (leave by 6:00 AM)"},
+      {type:"meeting", time:"9:00 AM", endTime:"11:00 AM", name:"Peralta District (Berkeley, Alameda, Laney, Merritt)", priority:"Medium", meeting:"District Check-in — 4 schools, 1 meeting", tag:"2027 Renewal", lat:37.8000, lng:-122.2400},
+      {type:"drive", from:"Oakland (Peralta HQ)", to:"Delta (San Joaquin) College (Stockton)", duration:"80 min + 25 min buffer", via:"I-580 E → I-205 E → I-5 N", arriveTime:"~12:45 PM"},
+      {type:"meeting", time:"12:45 PM", endTime:"1:45 PM", name:"Delta (San Joaquin) College", priority:"Medium", meeting:"1-hr Check-in", tag:"2027 Renewal", lat:37.9595, lng:-121.2852},
+      {type:"drive", from:"Delta College (Stockton)", to:"Madera College", duration:"65 min + 15 min buffer", via:"CA-99 S", arriveTime:"~3:05 PM"},
+      {type:"meeting", time:"3:05 PM", endTime:"4:00 PM", name:"Madera College", priority:"Medium", meeting:"~55-min Check-in", tag:"2027 Renewal", lat:36.9783, lng:-120.0611},
+      {type:"drive", from:"Madera College", to:"Fresno hotel", duration:"20 min", via:"CA-99 S", arriveTime:"~4:20 PM"},
+      {type:"overnight", note:"Overnight Fresno — Clovis Community College is 15 min east for an 8:30 AM EBR start."},
+    ]
+  },
+  {
+    day:4, date:"Thu, Apr 17", region:"Central Valley → Inland Empire",
+    optional:false,
+    summary:"Morning EBR at Clovis, then the longest single drive of the trip — roughly 3 hours south via CA-99 and CA-58 to the I-10 corridor. Built-in 30-min buffer before the Chaffey EBR. Day 4 is intentionally two meetings only given the transit distance.",
+    night:"Overnight San Bernardino — SBVC and Crafton Hills are both within 25 min tomorrow morning.",
+    timeline:[
+      {type:"drive", from:"Fresno hotel", to:"Clovis Community College", duration:"15 min", via:"CA-168 E", arriveTime:"8:15 AM"},
+      {type:"meeting", time:"8:30 AM", endTime:"10:30 AM", name:"Clovis Community College", priority:"High", meeting:"Executive Business Review", tag:"Competitive Threat", lat:36.8321, lng:-119.6846},
+      {type:"drive", from:"Clovis Community College", to:"Chaffey College (Rancho Cucamonga)", duration:"3 hrs + 30 min buffer", via:"CA-99 S → CA-58 E → I-15 S → I-10 W", arriveTime:"~2:00 PM"},
+      {type:"meeting", time:"2:00 PM", endTime:"4:00 PM", name:"Chaffey College", priority:"High", meeting:"Executive Business Review", tag:"Competitive Threat", lat:34.1061, lng:-117.5961},
+      {type:"drive", from:"Chaffey College", to:"San Bernardino hotel", duration:"25 min", via:"I-10 E", arriveTime:"~4:25 PM"},
+      {type:"overnight", note:"Overnight San Bernardino — three Inland Empire EBRs within close reach tomorrow."},
+    ]
+  },
+  {
+    day:5, date:"Fri, Apr 18", region:"Inland Empire → Palm Desert → LAX",
+    optional:false,
+    summary:"The heaviest day by necessity — three EBRs along the I-10 corridor. SBVC and Crafton Hills are 25 min apart; Cal Indian Nations requires a 65-min drive east to Palm Desert. Buffers are tighter than other days; treat start times as firm. Depart LAX in the evening.",
+    night:"✈ Depart LAX — evening international flight to HCMC via connection.",
+    timeline:[
+      {type:"meeting", time:"8:00 AM", endTime:"10:00 AM", name:"San Bernardino Valley College", priority:"High", meeting:"Executive Business Review", tag:"Competitive Threat", lat:34.1094, lng:-117.2977},
+      {type:"drive", from:"San Bernardino Valley College", to:"Crafton Hills College (Yucaipa)", duration:"25 min + 15 min buffer", via:"I-10 E → CA-38 E", arriveTime:"~10:40 AM"},
+      {type:"meeting", time:"10:40 AM", endTime:"12:40 PM", name:"Crafton Hills College", priority:"High", meeting:"Executive Business Review", tag:"Competitive Threat", lat:34.0581, lng:-117.1253},
+      {type:"drive", from:"Crafton Hills College", to:"California Indian Nations College (Palm Desert)", duration:"65 min + 15 min buffer", via:"I-10 E", arriveTime:"~2:00 PM"},
+      {type:"meeting", time:"2:00 PM", endTime:"4:00 PM", name:"California Indian Nations College", priority:"High", meeting:"Executive Business Review", tag:"Competitive Threat", lat:33.7225, lng:-116.3736},
+      {type:"drive", from:"California Indian Nations College", to:"LAX Airport", duration:"~2 hrs", via:"I-10 W", arriveTime:"~6:00 PM"},
+      {type:"overnight", note:"✈ Depart LAX — evening international flight to HCMC via connection. Plenty of time before a standard 9–10 PM departure."},
+    ]
+  },
+  {
+    day:"6*", date:"Mon, Apr 21", region:"Central Coast — San Luis Obispo",
+    optional:true,
+    summary:"Optional bonus day. Spend the weekend in Santa Barbara (highly recommended — 90 min from SLO, one of California's finest weekends). Drive up Monday morning for a relaxed, unhurried EBR at Cuesta with no time pressure and no flight to catch until afternoon. Depart LAX or SFO depending on your routing home.",
+    night:"Fly LAX (3.5 hrs south) or SFO (5 hrs north) for international departure.",
+    timeline:[
+      {type:"drive", from:"Santa Barbara (weekend base)", to:"Cuesta College (San Luis Obispo)", duration:"90 min", via:"US-101 N", arriveTime:"~9:30 AM"},
+      {type:"meeting", time:"10:00 AM", endTime:"12:00 PM", name:"Cuesta College", priority:"High", meeting:"Executive Business Review", tag:"Competitive Threat", lat:35.2894, lng:-120.6736},
+      {type:"drive", from:"Cuesta College", to:"LAX Airport (or SFO)", duration:"3.5 hrs to LAX / 5 hrs to SFO", via:"US-101 S to LAX  ·  US-101 N to SFO", arriveTime:"Afternoon — no rush"},
+      {type:"overnight", note:"✈ Depart LAX or SFO — international flight to HCMC. No hard time constraint this day."},
+    ]
+  }
+];
+
+const ALL_ACCOUNTS = [
+  // Visited - Day 1
+  {name:"College of San Mateo",priority:"High",day:1,dayLabel:"Day 1 · Mon Apr 14",meeting:"EBR",region:"Bay Area",tag:"Competitive Threat"},
+  {name:"Chabot College",priority:"Medium",day:1,dayLabel:"Day 1 · Mon Apr 14",meeting:"Check-in",region:"East Bay",tag:"Upsell"},
+  {name:"Las Positas College",priority:"Medium",day:1,dayLabel:"Day 1 · Mon Apr 14",meeting:"Check-in",region:"East Bay",tag:"Upsell"},
+  // Day 2
+  {name:"San Jose City College",priority:"High",day:2,dayLabel:"Day 2 · Tue Apr 15",meeting:"EBR",region:"South Bay",tag:"Competitive Threat"},
+  {name:"Evergreen Valley College",priority:"High",day:2,dayLabel:"Day 2 · Tue Apr 15",meeting:"EBR",region:"South Bay",tag:"Competitive Threat"},
+  {name:"Gavilan College",priority:"Medium",day:2,dayLabel:"Day 2 · Tue Apr 15",meeting:"Check-in",region:"South Bay",tag:"2027 Renewal"},
+  // Day 3
+  {name:"Berkely College",priority:"Medium",day:3,dayLabel:"Day 3 · Wed Apr 16",meeting:"District Check-in",region:"East Bay",tag:"2027 Renewal"},
+  {name:"College of Alameda",priority:"Medium",day:3,dayLabel:"Day 3 · Wed Apr 16",meeting:"District Check-in",region:"East Bay",tag:"2027 Renewal"},
+  {name:"Laney College",priority:"Medium",day:3,dayLabel:"Day 3 · Wed Apr 16",meeting:"District Check-in",region:"East Bay",tag:"2027 Renewal"},
+  {name:"Merritt College",priority:"Medium",day:3,dayLabel:"Day 3 · Wed Apr 16",meeting:"District Check-in",region:"East Bay",tag:"2027 Renewal"},
+  {name:"Delta (San Joaquin) College",priority:"Medium",day:3,dayLabel:"Day 3 · Wed Apr 16",meeting:"Check-in",region:"Central Valley",tag:"2027 Renewal"},
+  {name:"Madera College",priority:"Medium",day:3,dayLabel:"Day 3 · Wed Apr 16",meeting:"Check-in",region:"Central Valley",tag:"2027 Renewal"},
+  // Day 4
+  {name:"Clovis Community College",priority:"High",day:4,dayLabel:"Day 4 · Thu Apr 17",meeting:"EBR",region:"Central Valley",tag:"Competitive Threat"},
+  {name:"Chaffey College",priority:"High",day:4,dayLabel:"Day 4 · Thu Apr 17",meeting:"EBR",region:"Inland Empire",tag:"Competitive Threat"},
+  // Day 5
+  {name:"San Bernardino Valley College",priority:"High",day:5,dayLabel:"Day 5 · Fri Apr 18",meeting:"EBR",region:"Inland Empire",tag:"Competitive Threat"},
+  {name:"Crafton Hills College",priority:"High",day:5,dayLabel:"Day 5 · Fri Apr 18",meeting:"EBR",region:"Inland Empire",tag:"Competitive Threat"},
+  {name:"California Indian Nations College",priority:"High",day:5,dayLabel:"Day 5 · Fri Apr 18",meeting:"EBR",region:"Inland Empire",tag:"Competitive Threat"},
+  // Not scheduled
+  {name:"Cuesta College",priority:"High",day:6,dayLabel:"Day 6* · Mon Apr 21 (Optional)",meeting:"EBR",region:"Central Coast",tag:"Competitive Threat",optional:true},
+  {name:"Santa Monica College",priority:"Medium",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"LA Metro",tag:"Competitive Threat"},
+  {name:"Compton College",priority:"Medium",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"LA Metro",tag:"2027 Renewal"},
+  {name:"Victor Valley College",priority:"Medium",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"Inland Empire",tag:"2027 Renewal"},
+  {name:"Canada College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"Bay Area",tag:""},
+  {name:"Skyline College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"Bay Area",tag:""},
+  {name:"City College of San Francisco",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"Bay Area",tag:""},
+  {name:"Ohlone Community College District",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"East Bay",tag:""},
+  {name:"University of California, Davis",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"Central Valley",tag:""},
+  {name:"Fresno City College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"Central Valley",tag:""},
+  {name:"Reedley College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"Central Valley",tag:""},
+  {name:"Butte College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"Northern CA",tag:""},
+  {name:"Shasta College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"Northern CA",tag:""},
+  {name:"Feather River College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"Northern CA",tag:""},
+  {name:"Allan Hancock Community College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"Central Coast",tag:""},
+  {name:"Santa Barbara City College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"Central Coast",tag:""},
+  {name:"Irvine Valley Community College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"OC",tag:""},
+  {name:"Saddleback Community College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"OC",tag:""},
+  {name:"Santa Ana College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"OC",tag:""},
+  {name:"Coast Community College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"OC",tag:""},
+  {name:"Cypress",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"OC",tag:""},
+  {name:"Fullerton",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"OC",tag:""},
+  {name:"Rio Hondo College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"LA Metro",tag:""},
+  {name:"National University",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"San Diego",tag:""},
+  {name:"Palomar College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"San Diego",tag:""},
+  {name:"MiraCosta College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"San Diego",tag:""},
+  {name:"Mesa College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"San Diego",tag:""},
+  {name:"Miramar College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"San Diego",tag:""},
+  {name:"San Diego City College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"San Diego",tag:""},
+  {name:"San Diego Community College District (3 colleges)",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"San Diego",tag:""},
+  {name:"Southwestern Community College District",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"San Diego",tag:""},
+  {name:"Imperial Valley College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"San Diego",tag:""},
+  {name:"Norco College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"Inland Empire",tag:""},
+  {name:"Moreno Valley College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"Inland Empire",tag:""},
+  {name:"Riverside City College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"Inland Empire",tag:""},
+  {name:"Copper Mountain College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"Inland Empire",tag:""},
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MAP
+// ─────────────────────────────────────────────────────────────────────────────
+const map = L.map('map',{center:[36.5,-119.5],zoom:6});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+  attribution:'© OpenStreetMap © CARTO',subdomains:'abcd',maxZoom:19
+}).addTo(map);
+
+const PRICOLOR={High:'#e05252',Medium:'#e8944a',Low:'#4caf7d'};
+const DAYCLR=['#5b9bd5','#bc8cff','#56d364','#f0883e','#ff7b72','#e8944a'];
+
+function mkIcon(pri, optional){
+  const c=optional?'#e8944a':PRICOLOR[pri],s=pri==='High'?13:pri==='Medium'?10:8;
+  const border=optional?'rgba(232,148,74,.5)':'rgba(255,255,255,.6)';
+  const dash=optional?`border:2px dashed ${border};`:`border:2px solid ${border};`;
+  return L.divIcon({className:'',html:`<div style="width:${s}px;height:${s}px;background:${optional?'transparent':c};border-radius:50%;${dash}box-shadow:0 0 ${s}px ${c};"></div>`,iconSize:[s,s],iconAnchor:[s/2,s/2]});
+}
+
+DAYS.forEach((d,di)=>{
+  const pts=[];
+  d.timeline.filter(t=>t.type==='meeting').forEach(s=>{
+    const m=L.marker([s.lat,s.lng],{icon:mkIcon(s.priority,d.optional)}).addTo(map);
+    const optLabel=d.optional?' · <em style="color:var(--medium)">Optional</em>':'';
+    m.bindPopup(`<div class="popup-name">${s.name}</div><span class="pri-badge ${s.priority}">${s.priority} Priority</span>${optLabel}<div class="popup-day">Day ${d.day} · ${d.date}</div><div style="font-size:.68rem;color:#7a8a9e;margin-top:3px;">${s.time} – ${s.endTime||''} · ${s.meeting}</div>`,{maxWidth:230});
+    pts.push([s.lat,s.lng]);
+  });
+  const lineStyle=d.optional?{color:DAYCLR[di],weight:2,opacity:.5,dashArray:'4 6'}:{color:DAYCLR[di],weight:2.5,opacity:.65,dashArray:'5 4'};
+  if(pts.length>1) L.polyline(pts,lineStyle).addTo(map);
+});
+
+// Airports
+[{lbl:'✈ SFO',lat:37.6213,lng:-122.379,c:'#5b9bd5'},{lbl:'✈ LAX',lat:33.9416,lng:-118.4085,c:'#e05252'}].forEach(a=>{
+  L.marker([a.lat,a.lng],{icon:L.divIcon({className:'',html:`<div style="background:${a.c};color:#fff;font-size:8px;font-weight:700;padding:2px 7px;border-radius:3px;white-space:nowrap;font-family:'IBM Plex Sans',sans-serif;">${a.lbl}</div>`,iconSize:[55,18],iconAnchor:[27,9]})}).addTo(map);
+});
+
+// Map sidebar
+const msb=document.getElementById('map-sidebar');
+DAYS.forEach((d,i)=>{
+  const meetings=d.timeline.filter(t=>t.type==='meeting');
+  const card=document.createElement('div');
+  card.className='day-card'+(d.optional?' optional-card':'');
+  if(d.optional) card.style.cssText='border-left:3px dashed rgba(232,148,74,.4);background:rgba(232,148,74,.03);';
+  const optBadge=d.optional?`<span style="font-size:.58rem;font-weight:700;color:var(--medium);background:rgba(232,148,74,.15);padding:1px 7px;border-radius:10px;margin-left:6px;text-transform:uppercase;letter-spacing:.05em;">Optional</span>`:'';
+  card.innerHTML=`<div class="day-card-header"><div class="day-num" style="${d.optional?'color:var(--medium)':''}">${d.day}</div><div class="day-meta"><h4>${d.date}${optBadge}</h4><p>${d.region}</p></div></div><div class="school-chips">${meetings.map(s=>`<div class="chip"><div class="dot ${s.priority}"></div><span>${s.name}</span><span class="chip-type">${s.meeting.includes('EBR')||s.meeting.includes('Executive')?'EBR':'Check-in'}</span></div>`).join('')}</div>`;
+  card.addEventListener('click',()=>{
+    msb.querySelectorAll('.day-card').forEach(c=>c.classList.remove('active'));
+    card.classList.add('active');
+    const bounds=meetings.map(s=>[s.lat,s.lng]);
+    map.fitBounds(bounds,{padding:[60,60],maxZoom:12});
+  });
+  msb.appendChild(card);
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TABLE
+// ─────────────────────────────────────────────────────────────────────────────
+let sortCol='day',sortDir=1,filterPri='all',searchTerm='';
+function priOrd(p){return p==='High'?0:p==='Medium'?1:2;}
+
+function renderTable(){
+  let data=[...ALL_ACCOUNTS];
+  if(filterPri!=='all') data=data.filter(r=>r.priority===filterPri);
+  if(searchTerm) data=data.filter(r=>r.name.toLowerCase().includes(searchTerm.toLowerCase()));
+  data.sort((a,b)=>{
+    let av,bv;
+    if(sortCol==='priority'){av=priOrd(a);bv=priOrd(b);}
+    else if(sortCol==='day'){av=a.day??999;bv=b.day??999;}
+    else{av=(a[sortCol]||'').toLowerCase();bv=(b[sortCol]||'').toLowerCase();}
+    return av<bv?-sortDir:av>bv?sortDir:0;
+  });
+  document.getElementById('table-count').textContent=`${data.length} of ${ALL_ACCOUNTS.length} accounts`;
+  document.getElementById('table-body').innerHTML=data.map(r=>`<tr>
+    <td>${r.name}</td>
+    <td><span class="pri-badge ${r.priority}">${r.priority}</span></td>
+    <td>${r.day?(r.optional?`<span class="day-badge" style="border:1px dashed rgba(232,148,74,.5);background:rgba(232,148,74,.08);color:var(--medium);">${r.dayLabel} ✦ Optional</span>`:`<span class="day-badge">${r.dayLabel}</span>`):`<span class="not-scheduled">Not scheduled</span>`}</td>
+    <td><span class="visit-note">${r.meeting}</span></td>
+    <td style="color:var(--muted);font-size:.72rem;">${r.region}</td>
+    <td style="color:var(--muted);font-size:.72rem;">${r.tag||'—'}</td>
+  </tr>`).join('');
+}
+
+document.querySelectorAll('th[data-col]').forEach(th=>{
+  th.addEventListener('click',()=>{
+    if(sortCol===th.dataset.col) sortDir*=-1; else{sortCol=th.dataset.col;sortDir=1;}
+    document.querySelectorAll('th').forEach(t=>{t.classList.remove('sorted');t.querySelector('.sort-icon').textContent='↕';});
+    th.classList.add('sorted');
+    th.querySelector('.sort-icon').textContent=sortDir===1?'↑':'↓';
+    renderTable();
+  });
+});
+
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    filterPri=btn.dataset.filter;
+    document.querySelectorAll('.filter-btn').forEach(b=>{b.className='filter-btn';});
+    btn.classList.add(`on-${filterPri}`);
+    renderTable();
+  });
+});
+
+document.getElementById('search-input').addEventListener('input',e=>{searchTerm=e.target.value;renderTable();});
+renderTable();
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ITINERARY
+// ─────────────────────────────────────────────────────────────────────────────
+const itin=document.getElementById('itin-inner');
+const visited=ALL_ACCOUNTS.filter(a=>a.day);
+const highVisited=visited.filter(a=>a.priority==='High').length;
+const medVisited=[...new Set(visited.filter(a=>a.priority==='Medium').map(a=>a.name))].length;
+
+itin.innerHTML=`
+<div class="itin-intro">
+  <h2>California Customer Visit Trip — April 14–18, 2025</h2>
+  <p>Fly into <strong>SFO</strong> (primary transpacific gateway from HCMC via Korean Air / Vietnam Airlines / Cathay Pacific). Route tracks SFO → Peninsula → South Bay → East Bay → Central Valley → Inland Empire → <strong>LAX</strong> departure. All meetings end by 4:00 PM. No weekend travel. Drive times shown include buffer for traffic, breaks, and the unexpected.</p>
+  <div class="itin-stats">
+    <div class="itin-stat"><div class="itin-stat-num">${highVisited}</div><div class="itin-stat-label">EBRs (core)</div></div>
+    <div class="itin-stat"><div class="itin-stat-num">${medVisited}</div><div class="itin-stat-label">Medium Accts</div></div>
+    <div class="itin-stat"><div class="itin-stat-num">${visited.length}</div><div class="itin-stat-label">Total Visited</div></div>
+    <div class="itin-stat"><div class="itin-stat-num">5</div><div class="itin-stat-label">Core Days</div></div>
+    <div class="itin-stat"><div class="itin-stat-num">~950 mi</div><div class="itin-stat-label">Total Driving</div></div>
+  </div>
+</div>
+<div class="notice-box">
+  <strong>⚠ Scheduling note:</strong> Santa Monica, Compton, and Victor Valley (all Medium priority) cannot be accommodated within the Mon–Fri window without compromising the Inland Empire EBR cluster. Recommend a future standalone LA/IE check-in day to cover these three. Cuesta College (High priority, SLO) is addressed via the optional Day 6 below.
+</div>
+${DAYS.map(d=>{
+  if(d.optional) return `
+<div class="optional-box">
+  <div class="optional-header">
+    <span class="optional-badge">✦ Optional</span>
+    <div>
+      <div class="optional-title">Day 6* &nbsp;·&nbsp; ${d.date} &nbsp;·&nbsp; ${d.region}</div>
+      <div class="optional-subtitle">Extend the trip through the weekend — fly home Monday instead of Friday</div>
+    </div>
+  </div>
+  <div class="optional-note">
+    ${d.summary}
+  </div>
+  <div class="timeline">
+    ${d.timeline.map(t=>{
+      if(t.type==='meeting') return `
+        <div class="tl-row meeting">
+          <div class="tl-time">${t.time}<br><span style="font-size:.62rem;opacity:.6">→ ${t.endTime||''}</span></div>
+          <div class="tl-content">
+            <div class="tl-name" style="color:var(--medium)">${t.name}${t.tag?`<small>${t.tag}</small>`:''}</div>
+            <div class="tl-meta"><span class="pri-badge ${t.priority}">${t.priority} — ${t.meeting}</span><span style="font-size:.62rem;color:var(--medium);margin-left:8px;">✦ Optional Day</span></div>
+          </div>
+        </div>`;
+      if(t.type==='drive') return `
+        <div class="tl-row drive">
+          <div class="tl-time">🚗 drive</div>
+          <div class="drive-info">
+            <span>${t.from}</span><span class="drive-arrow">→</span><span>${t.to}</span>
+            <span class="drive-detail">${t.duration} · ${t.via} · arrive ${t.arriveTime}</span>
+          </div>
+        </div>`;
+      if(t.type==='overnight') return `
+        <div class="tl-row overnight">
+          <div class="tl-time">✈ depart</div>
+          <div class="overnight-info">${t.note}</div>
+        </div>`;
+      return '';
+    }).join('')}
+  </div>
+</div>`;
+
+  return `
+<div class="day-block">
+  <div class="day-block-header">
+    <div class="day-block-num">${d.day}</div>
+    <div class="day-block-info">
+      <h3>${d.date} &nbsp;·&nbsp; ${d.region}</h3>
+      <p>${d.summary}</p>
+    </div>
+  </div>
+  <div class="timeline">
+    ${d.timeline.map(t=>{
+      if(t.type==='meeting') return `
+        <div class="tl-row meeting">
+          <div class="tl-time">${t.time}<br><span style="font-size:.62rem;opacity:.6">→ ${t.endTime}</span></div>
+          <div class="tl-content">
+            <div class="tl-name">${t.name}${t.tag?`<small>${t.tag}</small>`:''}</div>
+            <div class="tl-meta"><span class="pri-badge ${t.priority}">${t.priority} — ${t.meeting}</span></div>
+          </div>
+        </div>`;
+      if(t.type==='drive') return `
+        <div class="tl-row drive">
+          <div class="tl-time">🚗 drive</div>
+          <div class="drive-info">
+            <span>${t.from}</span><span class="drive-arrow">→</span><span>${t.to}</span>
+            <span class="drive-detail">${t.duration} · via ${t.via} · arrive ${t.arriveTime}</span>
+          </div>
+        </div>`;
+      if(t.type==='overnight') return `
+        <div class="tl-row overnight">
+          <div class="tl-time">🌙 eve</div>
+          <div class="overnight-info">${t.note}</div>
+        </div>`;
+      return '';
+    }).join('')}
+  </div>
+</div>`;
+}).join('')}`;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TAB SWITCHING
+// ─────────────────────────────────────────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const tab=btn.dataset.tab;
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+tab).classList.add('active');
+    if(tab==='map') setTimeout(()=>map.invalidateSize(),50);
+  });
+});
+</script>
+</body>
+</html>
