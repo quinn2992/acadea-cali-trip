@@ -157,7 +157,7 @@ tr:hover td{background:rgba(255,255,255,.02);}
 <header>
   <div class="header-brand">
     <h1>California Customer Visit Trip</h1>
-    <p>April 14–18, 2025 &nbsp;·&nbsp; Arrive SFO &nbsp;·&nbsp; Depart LAX &nbsp;·&nbsp; Mon–Fri &nbsp;·&nbsp; <span style="color:var(--medium);">+ Optional Day 6 (Mon Apr 21)</span></p>
+    <p>April 14–17, 2025 &nbsp;·&nbsp; Arrive SFO &nbsp;·&nbsp; Depart LAX &nbsp;·&nbsp; Mon–Thu &nbsp;·&nbsp; <span style="color:var(--medium);">+ Optional Day 5 (Mon Apr 21)</span></p>
   </div>
   <div class="tabs">
     <button class="tab-btn active" data-tab="map">🗺&nbsp; Map</button>
@@ -264,38 +264,23 @@ const DAYS = [
     ]
   },
   {
-    day:4, date:"Thu, Apr 17", region:"Central Valley → Inland Empire",
+    day:4, date:"Thu, Apr 17", region:"Central Valley → Palm Desert → LAX",
     optional:false,
-    summary:"Morning EBR at Clovis, then the longest single drive of the trip — roughly 3 hours south via CA-99 and CA-58 to the I-10 corridor. Extended lunch break before the Chaffey EBR. Day 4 is intentionally two meetings only given the transit distance.",
-    night:"Overnight San Bernardino — SBVC and Crafton Hills are both within 25 min tomorrow morning.",
+    summary:"Morning EBR at Clovis, then the longest drive of the trip — roughly 4 hours south and east via CA-99 and CA-58 to the desert. Extended lunch break during the drive. Afternoon EBR at California Indian Nations in Palm Desert, then a 2.5-hour drive west to LAX for an evening departure.",
+    night:"✈ Depart LAX — evening international flight to HCMC via connection.",
     timeline:[
       {type:"drive", from:"Fresno hotel", to:"Clovis Community College", duration:"15 min", via:"CA-168 E", arriveTime:"8:15 AM"},
       {type:"meeting", time:"8:30 AM", endTime:"10:30 AM", name:"Clovis Community College", priority:"High", meeting:"Executive Business Review", tag:"Competitive Threat", lat:36.8321, lng:-119.6846},
-      {type:"drive", from:"Clovis Community College", to:"Chaffey College (Rancho Cucamonga)", duration:"3 hrs + lunch break", via:"CA-99 S → CA-58 E → I-15 S → I-10 W", arriveTime:"~3:00 PM"},
-      {type:"meeting", time:"3:00 PM", endTime:"5:00 PM", name:"Chaffey College", priority:"High", meeting:"Executive Business Review", tag:"Competitive Threat", lat:34.1061, lng:-117.5961},
-      {type:"drive", from:"Chaffey College", to:"San Bernardino hotel", duration:"25 min", via:"I-10 E", arriveTime:"~5:25 PM"},
-      {type:"overnight", note:"Overnight San Bernardino — three Inland Empire EBRs within close reach tomorrow."},
-    ]
-  },
-  {
-    day:5, date:"Fri, Apr 18", region:"Inland Empire → Palm Desert → LAX",
-    optional:false,
-    summary:"The heaviest day by necessity — three EBRs along the I-10 corridor. SBVC and Crafton Hills are 25 min apart; Cal Indian Nations requires a 65-min drive east to Palm Desert. Buffers are tighter than other days; treat start times as firm. Depart LAX in the evening.",
-    night:"✈ Depart LAX — evening international flight to HCMC via connection.",
-    timeline:[
-      {type:"meeting", time:"8:30 AM", endTime:"10:30 AM", name:"San Bernardino Valley College", priority:"High", meeting:"Executive Business Review", tag:"Competitive Threat", lat:34.1094, lng:-117.2977},
-      {type:"drive", from:"San Bernardino Valley College", to:"Crafton Hills College (Yucaipa)", duration:"25 min + 35 min buffer", via:"I-10 E → CA-38 E", arriveTime:"~11:30 AM"},
-      {type:"meeting", time:"11:30 AM", endTime:"1:30 PM", name:"Crafton Hills College", priority:"High", meeting:"Executive Business Review", tag:"Competitive Threat", lat:34.0581, lng:-117.1253},
-      {type:"drive", from:"Crafton Hills College", to:"California Indian Nations College (Palm Desert)", duration:"65 min + 25 min buffer", via:"I-10 E", arriveTime:"~3:00 PM"},
+      {type:"drive", from:"Clovis Community College", to:"California Indian Nations College (Palm Desert)", duration:"4 hrs + lunch break", via:"CA-99 S → CA-58 E → I-15 S → I-10 E", arriveTime:"~3:00 PM"},
       {type:"meeting", time:"3:00 PM", endTime:"5:00 PM", name:"California Indian Nations College", priority:"High", meeting:"Executive Business Review", tag:"Competitive Threat", lat:33.7225, lng:-116.3736},
-      {type:"drive", from:"California Indian Nations College", to:"LAX Airport", duration:"~2 hrs", via:"I-10 W", arriveTime:"~7:00 PM"},
+      {type:"drive", from:"California Indian Nations College", to:"LAX Airport", duration:"~2 hrs 30 min", via:"I-10 W", arriveTime:"~7:30 PM"},
       {type:"overnight", note:"✈ Depart LAX — evening international flight to HCMC via connection. Plenty of time before a standard 9–10 PM departure."},
     ]
   },
   {
-    day:"6*", date:"Mon, Apr 21", region:"Central Coast — San Luis Obispo",
+    day:"5*", date:"Mon, Apr 21", region:"Central Coast — San Luis Obispo",
     optional:true,
-    summary:"Optional bonus day. Spend the weekend in Santa Barbara (highly recommended — 90 min from SLO, one of California's finest weekends). Drive up Monday morning for a relaxed, unhurried EBR at Cuesta with no time pressure and no flight to catch until afternoon. Depart LAX or SFO depending on your routing home.",
+    summary:"Optional bonus day. Spend the weekend in Santa Barbara or Palm Springs (highly recommended). Drive up Monday morning for a relaxed, unhurried EBR at Cuesta with no time pressure and no flight to catch until afternoon. Depart LAX or SFO depending on your routing home.",
     night:"Fly LAX (3.5 hrs south) or SFO (5 hrs north) for international departure.",
     timeline:[
       {type:"drive", from:"Santa Barbara (weekend base)", to:"Cuesta College (San Luis Obispo)", duration:"90 min", via:"US-101 N", arriveTime:"~9:30 AM"},
@@ -324,13 +309,9 @@ const ALL_ACCOUNTS = [
   {name:"Madera College",priority:"Medium",day:3,dayLabel:"Day 3 · Wed Apr 16",meeting:"Check-in",region:"Central Valley",tag:"2027 Renewal"},
   // Day 4
   {name:"Clovis Community College",priority:"High",day:4,dayLabel:"Day 4 · Thu Apr 17",meeting:"EBR",region:"Central Valley",tag:"Competitive Threat"},
-  {name:"Chaffey College",priority:"High",day:4,dayLabel:"Day 4 · Thu Apr 17",meeting:"EBR",region:"Inland Empire",tag:"Competitive Threat"},
-  // Day 5
-  {name:"San Bernardino Valley College",priority:"High",day:5,dayLabel:"Day 5 · Fri Apr 18",meeting:"EBR",region:"Inland Empire",tag:"Competitive Threat"},
-  {name:"Crafton Hills College",priority:"High",day:5,dayLabel:"Day 5 · Fri Apr 18",meeting:"EBR",region:"Inland Empire",tag:"Competitive Threat"},
-  {name:"California Indian Nations College",priority:"High",day:5,dayLabel:"Day 5 · Fri Apr 18",meeting:"EBR",region:"Inland Empire",tag:"Competitive Threat"},
+  {name:"California Indian Nations College",priority:"High",day:4,dayLabel:"Day 4 · Thu Apr 17",meeting:"EBR",region:"Inland Empire",tag:"Competitive Threat"},
   // Not scheduled
-  {name:"Cuesta College",priority:"High",day:6,dayLabel:"Day 6* · Mon Apr 21 (Optional)",meeting:"EBR",region:"Central Coast",tag:"Competitive Threat",optional:true},
+  {name:"Cuesta College",priority:"High",day:5,dayLabel:"Day 5* · Mon Apr 21 (Optional)",meeting:"EBR",region:"Central Coast",tag:"Competitive Threat",optional:true},
   {name:"Santa Monica College",priority:"Medium",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"LA Metro",tag:"Competitive Threat"},
   {name:"Compton College",priority:"Medium",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"LA Metro",tag:"2027 Renewal"},
   {name:"Victor Valley College",priority:"Medium",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"Inland Empire",tag:"2027 Renewal"},
@@ -348,7 +329,6 @@ const ALL_ACCOUNTS = [
   {name:"Santa Barbara City College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"Central Coast",tag:""},
   {name:"Irvine Valley Community College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"OC",tag:""},
   {name:"Saddleback Community College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"OC",tag:""},
-  {name:"Santa Ana College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"OC",tag:""},
   {name:"Coast Community College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"OC",tag:""},
   {name:"Cypress",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"OC",tag:""},
   {name:"Fullerton",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"OC",tag:""},
@@ -481,18 +461,18 @@ const medVisited=[...new Set(visited.filter(a=>a.priority==='Medium').map(a=>a.n
 
 itin.innerHTML=`
 <div class="itin-intro">
-  <h2>California Customer Visit Trip — April 14–18, 2025</h2>
-  <p>Fly into <strong>SFO</strong> (primary transpacific gateway from HCMC via Korean Air / Vietnam Airlines / Cathay Pacific). Route tracks SFO → Peninsula → South Bay → East Bay → Central Valley → Inland Empire → <strong>LAX</strong> departure. All meetings end by 4:00 PM. No weekend travel. Drive times shown include buffer for traffic, breaks, and the unexpected.</p>
+  <h2>California Customer Visit Trip — April 14–17, 2025</h2>
+  <p>Fly into <strong>SFO</strong> (primary transpacific gateway from HCMC via Korean Air / Vietnam Airlines / Cathay Pacific). Route tracks SFO → Peninsula → South Bay → East Bay → Central Valley → Palm Desert → <strong>LAX</strong> departure. All meetings end by 5:00 PM. No weekend travel. Drive times shown include buffer for traffic, breaks, and the unexpected.</p>
   <div class="itin-stats">
     <div class="itin-stat"><div class="itin-stat-num">${highVisited}</div><div class="itin-stat-label">EBRs (core)</div></div>
     <div class="itin-stat"><div class="itin-stat-num">${medVisited}</div><div class="itin-stat-label">Medium Accts</div></div>
     <div class="itin-stat"><div class="itin-stat-num">${visited.length}</div><div class="itin-stat-label">Total Visited</div></div>
-    <div class="itin-stat"><div class="itin-stat-num">5</div><div class="itin-stat-label">Core Days</div></div>
-    <div class="itin-stat"><div class="itin-stat-num">~950 mi</div><div class="itin-stat-label">Total Driving</div></div>
+    <div class="itin-stat"><div class="itin-stat-num">4</div><div class="itin-stat-label">Core Days</div></div>
+    <div class="itin-stat"><div class="itin-stat-num">~900 mi</div><div class="itin-stat-label">Total Driving</div></div>
   </div>
 </div>
 <div class="notice-box">
-  <strong>⚠ Scheduling note:</strong> Santa Monica, Compton, and Victor Valley (all Medium priority) cannot be accommodated within the Mon–Fri window without compromising the Inland Empire EBR cluster. Recommend a future standalone LA/IE check-in day to cover these three. Cuesta College (High priority, SLO) is addressed via the optional Day 6 below.
+  <strong>⚠ Scheduling note:</strong> Crafton Hills, San Bernardino Valley College, Chaffey College, and Santa Ana College are covered by Mark's separate March 23–25 trip and are not included in this itinerary. Santa Monica, Compton, and Victor Valley (all Medium priority) cannot be accommodated within the Mon–Thu window without adding significant driving time. Recommend a future standalone LA/IE check-in day to cover these three. Cuesta College (High priority, SLO) is addressed via the optional Day 5 below.
 </div>
 ${DAYS.map(d=>{
   if(d.optional) return `
@@ -500,8 +480,8 @@ ${DAYS.map(d=>{
   <div class="optional-header">
     <span class="optional-badge">✦ Optional</span>
     <div>
-      <div class="optional-title">Day 6* &nbsp;·&nbsp; ${d.date} &nbsp;·&nbsp; ${d.region}</div>
-      <div class="optional-subtitle">Extend the trip through the weekend — fly home Monday instead of Friday</div>
+      <div class="optional-title">Day 5* &nbsp;·&nbsp; ${d.date} &nbsp;·&nbsp; ${d.region}</div>
+      <div class="optional-subtitle">Extend the trip through the weekend — fly home Monday instead of Thursday</div>
     </div>
   </div>
   <div class="optional-note">
