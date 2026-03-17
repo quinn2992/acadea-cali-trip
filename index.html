@@ -71,6 +71,9 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .filter-btn.on-High{border-color:var(--high);color:var(--high);background:rgba(224,82,82,.08);}
 .filter-btn.on-Medium{border-color:var(--medium);color:var(--medium);background:rgba(232,148,74,.08);}
 .filter-btn.on-Low{border-color:var(--low);color:var(--low);background:rgba(76,175,125,.08);}
+.filter-btn.on-march{border-color:#9b72cf;color:#9b72cf;background:rgba(155,114,207,.08);}
+.filter-btn.on-april{border-color:#38a89d;color:#38a89d;background:rgba(56,168,157,.08);}
+.day-badge-march{display:inline-block;background:rgba(155,114,207,.12);border:1px solid rgba(155,114,207,.35);color:#9b72cf;border-radius:4px;padding:2px 7px;font-size:.68rem;font-weight:500;}
 .table-count{margin-left:auto;font-size:0.7rem;color:var(--muted);}
 .table-wrap{flex:1;overflow:auto;padding:0 22px 22px;}
 .table-wrap::-webkit-scrollbar{width:4px;height:4px;}
@@ -180,6 +183,8 @@ tr:hover td{background:rgba(255,255,255,.02);}
       <button class="filter-btn" data-filter="High">High</button>
       <button class="filter-btn" data-filter="Medium">Medium</button>
       <button class="filter-btn" data-filter="Low">Low</button>
+      <button class="filter-btn" data-filter="march">March</button>
+      <button class="filter-btn" data-filter="april">April</button>
     </div>
     <div class="table-count" id="table-count"></div>
   </div>
@@ -424,7 +429,9 @@ function priOrd(p){return p==='High'?0:p==='Medium'?1:2;}
 
 function renderTable(){
   let data=[...ALL_ACCOUNTS];
-  if(filterPri!=='all') data=data.filter(r=>r.priority===filterPri);
+  if(filterPri==='march') data=data.filter(r=>r.dayLabel&&r.dayLabel.startsWith("Mark's Visit"));
+  else if(filterPri==='april') data=data.filter(r=>r.day!=null);
+  else if(filterPri!=='all') data=data.filter(r=>r.priority===filterPri);
   if(searchTerm) data=data.filter(r=>r.name.toLowerCase().includes(searchTerm.toLowerCase()));
   data.sort((a,b)=>{
     let av,bv;
@@ -437,7 +444,7 @@ function renderTable(){
   document.getElementById('table-body').innerHTML=data.map(r=>`<tr>
     <td>${r.name}</td>
     <td><span class="pri-badge ${r.priority}">${r.priority}</span></td>
-    <td>${r.day?(r.optional?`<span class="day-badge" style="border:1px dashed rgba(232,148,74,.5);background:rgba(232,148,74,.08);color:var(--medium);">${r.dayLabel} ✦ Optional</span>`:`<span class="day-badge">${r.dayLabel}</span>`):`<span class="not-scheduled">Not scheduled</span>`}</td>
+    <td>${r.day!=null?(r.optional?`<span class="day-badge" style="border:1px dashed rgba(232,148,74,.5);background:rgba(232,148,74,.08);color:var(--medium);">${r.dayLabel} ✦ Optional</span>`:`<span class="day-badge">${r.dayLabel}</span>`):r.dayLabel&&r.dayLabel.startsWith("Mark's Visit")?`<span class="day-badge-march">${r.dayLabel}</span>`:`<span class="not-scheduled">Not scheduled</span>`}</td>
     <td><span class="visit-note">${r.meeting}</span></td>
     <td style="color:var(--muted);font-size:.72rem;">${r.region}</td>
     <td style="color:var(--muted);font-size:.72rem;">${r.tag||'—'}</td>
