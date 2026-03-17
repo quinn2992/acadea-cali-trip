@@ -455,7 +455,7 @@ function renderTable(){
 document.querySelectorAll('th[data-col]').forEach(th=>{
   th.addEventListener('click',()=>{
     if(sortCol===th.dataset.col) sortDir*=-1; else{sortCol=th.dataset.col;sortDir=1;}
-    document.querySelectorAll('th').forEach(t=>{t.classList.remove('sorted');t.querySelector('.sort-icon').textContent='↕';});
+    document.querySelectorAll('th').forEach(t=>{t.classList.remove('sorted');if(t.querySelector('.sort-icon'))t.querySelector('.sort-icon').textContent='↕';});
     th.classList.add('sorted');
     th.querySelector('.sort-icon').textContent=sortDir===1?'↑':'↓';
     renderTable();
