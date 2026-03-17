@@ -237,13 +237,11 @@ const DAYS = [
   {
     day:2, date:"Tue, Apr 15", region:"South Bay — San Jose",
     optional:false,
-    summary:"Two back-to-back EBRs — San Jose City and Evergreen Valley are 10 minutes apart, giving a natural built-in break between them. Gavilan in Gilroy is a relaxed afternoon check-in on the drive south.",
+    summary:"Morning EBR at San Jose City College, then a relaxed drive south to Gavilan in Gilroy for an afternoon check-in before the overnight drive to Fresno.",
     night:"Drive south to Fresno (2.5 hrs). Overnight Fresno.",
     timeline:[
       {type:"meeting", time:"9:00 AM", endTime:"11:00 AM", name:"San Jose City College", priority:"High", meeting:"Executive Business Review", tag:"Competitive Threat", lat:37.3352, lng:-121.8897},
-      {type:"drive", from:"San Jose City College", to:"Evergreen Valley College", duration:"15 min + 45 min break", via:"US-101 S → Capitol Expy", arriveTime:"~12:00 PM"},
-      {type:"meeting", time:"12:00 PM", endTime:"2:00 PM", name:"Evergreen Valley College", priority:"High", meeting:"Executive Business Review", tag:"Competitive Threat", lat:37.3337, lng:-121.8063},
-      {type:"drive", from:"Evergreen Valley College", to:"Gavilan College (Gilroy)", duration:"40 min + 20 min buffer", via:"US-101 S", arriveTime:"~3:00 PM"},
+      {type:"drive", from:"San Jose City College", to:"Gavilan College (Gilroy)", duration:"45 min + 60 min lunch buffer", via:"US-101 S", arriveTime:"~1:00 PM"},
       {type:"meeting", time:"3:00 PM", endTime:"4:00 PM", name:"Gavilan College", priority:"Medium", meeting:"1-hr Check-in", tag:"2027 Renewal", lat:37.0046, lng:-121.5655},
       {type:"drive", from:"Gavilan College", to:"Fresno hotel", duration:"2 hrs 30 min", via:"US-101 S → CA-25 → CA-198 E", arriveTime:"~6:30 PM"},
       {type:"overnight", note:"Overnight Fresno — positioned for East Bay and Central Valley on Day 3."},
@@ -269,25 +267,22 @@ const DAYS = [
     day:4, date:"Thu, Apr 17", region:"Central Valley → Inland Empire",
     optional:false,
     summary:"Morning EBR at Clovis, then the longest single drive of the trip — roughly 3 hours south via CA-99 and CA-58 to the I-10 corridor. Day 4 is intentionally one meeting given the transit distance — Chaffey is now covered by Mark's solo March visit (confirmed March 24).",
-    night:"Overnight San Bernardino — SBVC and Crafton Hills are both within 25 min tomorrow morning.",
+    night:"Overnight San Bernardino — positioned for the I-10 east drive to Palm Desert tomorrow.",
     timeline:[
       {type:"drive", from:"Fresno hotel", to:"Clovis Community College", duration:"15 min", via:"CA-168 E", arriveTime:"8:15 AM"},
       {type:"meeting", time:"8:30 AM", endTime:"10:30 AM", name:"Clovis Community College", priority:"Medium", meeting:"Executive Business Review", tag:"Competitive Threat", lat:36.8321, lng:-119.6846},
       {type:"drive", from:"Clovis Community College", to:"San Bernardino hotel", duration:"~3 hrs", via:"CA-99 S → CA-58 E → I-10 E", arriveTime:"~1:30 PM"},
-      {type:"overnight", note:"Overnight San Bernardino — three Inland Empire EBRs within close reach tomorrow."},
+      {type:"overnight", note:"Overnight San Bernardino — California Indian Nations College (Palm Desert) is ~65 min east on I-10 tomorrow."},
     ]
   },
   {
     day:5, date:"Fri, Apr 18", region:"Inland Empire → Palm Desert → LAX",
     optional:false,
-    summary:"The heaviest day by necessity — three EBRs along the I-10 corridor. SBVC and Crafton Hills are 25 min apart; Cal Indian Nations requires a 65-min drive east to Palm Desert. Buffers are tighter than other days; treat start times as firm. Depart LAX in the evening.",
+    summary:"One EBR — California Indian Nations College in Palm Desert. SBVC and Crafton Hills are now covered by Mark's solo March visit. Relaxed pace with a 65-min drive east on I-10, then a comfortable return drive to LAX for the evening flight.",
     night:"✈ Depart LAX — evening international flight to HCMC via connection.",
     timeline:[
-      {type:"meeting", time:"8:30 AM", endTime:"10:30 AM", name:"San Bernardino Valley College", priority:"High", meeting:"Executive Business Review", tag:"Competitive Threat", lat:34.1094, lng:-117.2977},
-      {type:"drive", from:"San Bernardino Valley College", to:"Crafton Hills College (Yucaipa)", duration:"25 min + 35 min buffer", via:"I-10 E → CA-38 E", arriveTime:"~11:30 AM"},
-      {type:"meeting", time:"11:30 AM", endTime:"1:30 PM", name:"Crafton Hills College", priority:"High", meeting:"Executive Business Review", tag:"Competitive Threat", lat:34.0581, lng:-117.1253},
-      {type:"drive", from:"Crafton Hills College", to:"California Indian Nations College (Palm Desert)", duration:"65 min + 25 min buffer", via:"I-10 E", arriveTime:"~3:00 PM"},
-      {type:"meeting", time:"3:00 PM", endTime:"5:00 PM", name:"California Indian Nations College", priority:"High", meeting:"Executive Business Review", tag:"Competitive Threat", lat:33.7225, lng:-116.3736},
+      {type:"drive", from:"San Bernardino hotel", to:"California Indian Nations College (Palm Desert)", duration:"65 min + 25 min buffer", via:"I-10 E", arriveTime:"~10:30 AM"},
+      {type:"meeting", time:"11:00 AM", endTime:"1:00 PM", name:"California Indian Nations College", priority:"High", meeting:"Executive Business Review", tag:"Competitive Threat", lat:33.7225, lng:-116.3736},
       {type:"drive", from:"California Indian Nations College", to:"LAX Airport", duration:"~2 hrs", via:"I-10 W", arriveTime:"~7:00 PM"},
       {type:"overnight", note:"✈ Depart LAX — evening international flight to HCMC via connection. Plenty of time before a standard 9–10 PM departure."},
     ]
@@ -313,7 +308,7 @@ const ALL_ACCOUNTS = [
   {name:"Las Positas College",priority:"Medium",day:1,dayLabel:"Day 1 · Mon Apr 14",meeting:"Check-in",region:"East Bay",tag:"Upsell"},
   // Day 2
   {name:"San Jose City College",priority:"High",day:2,dayLabel:"Day 2 · Tue Apr 15",meeting:"EBR",region:"South Bay",tag:"Competitive Threat"},
-  {name:"Evergreen Valley College",priority:"High",day:2,dayLabel:"Day 2 · Tue Apr 15",meeting:"EBR",region:"South Bay",tag:"Competitive Threat",note:"Mark will visit end of March"},
+  {name:"Evergreen Valley College",priority:"High",day:null,dayLabel:"Mark's Visit · March",meeting:"—",region:"South Bay",tag:"Competitive Threat",note:"Mark will visit in March"},
   {name:"Gavilan College",priority:"Medium",day:2,dayLabel:"Day 2 · Tue Apr 15",meeting:"Check-in",region:"South Bay",tag:"2027 Renewal"},
   // Day 3
   {name:"Berkely College",priority:"Medium",day:3,dayLabel:"Day 3 · Wed Apr 16",meeting:"District Check-in",region:"East Bay",tag:"2027 Renewal"},
@@ -324,10 +319,10 @@ const ALL_ACCOUNTS = [
   {name:"Madera College",priority:"Medium",day:3,dayLabel:"Day 3 · Wed Apr 16",meeting:"Check-in",region:"Central Valley",tag:"2027 Renewal"},
   // Day 4
   {name:"Clovis Community College",priority:"Medium",day:4,dayLabel:"Day 4 · Thu Apr 17",meeting:"EBR",region:"Central Valley",tag:"Deepen Relationship"},
-  {name:"Chaffey College",priority:"Medium",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"Inland Empire",tag:"Deepen Relationship",note:"Confirmed March 24 at 10 AM onsite — part of Mark's solo March visit. Not on April trip."},
+  {name:"Chaffey College",priority:"Medium",day:null,dayLabel:"Mark's Visit · March",meeting:"—",region:"Inland Empire",tag:"Deepen Relationship",note:"Confirmed March 24 at 10 AM onsite — part of Mark's solo March visit. Not on April trip."},
   // Day 5
-  {name:"San Bernardino Valley College",priority:"High",day:5,dayLabel:"Day 5 · Fri Apr 18",meeting:"EBR",region:"Inland Empire",tag:"Competitive Threat",note:"Mark will visit end of March"},
-  {name:"Crafton Hills College",priority:"High",day:5,dayLabel:"Day 5 · Fri Apr 18",meeting:"EBR",region:"Inland Empire",tag:"Competitive Threat",note:"Mark will visit end of March"},
+  {name:"San Bernardino Valley College",priority:"High",day:null,dayLabel:"Mark's Visit · March",meeting:"—",region:"Inland Empire",tag:"Competitive Threat",note:"Mark will visit in March"},
+  {name:"Crafton Hills College",priority:"High",day:null,dayLabel:"Mark's Visit · March",meeting:"—",region:"Inland Empire",tag:"Competitive Threat",note:"Mark will visit in March"},
   {name:"California Indian Nations College",priority:"High",day:5,dayLabel:"Day 5 · Fri Apr 18",meeting:"EBR",region:"Inland Empire",tag:"Competitive Threat"},
   // Not scheduled
   {name:"Cuesta College",priority:"High",day:6,dayLabel:"Day 6* · Mon Apr 21 (Optional)",meeting:"EBR",region:"Central Coast",tag:"Competitive Threat",optional:true},
@@ -348,7 +343,7 @@ const ALL_ACCOUNTS = [
   {name:"Santa Barbara City College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"Central Coast",tag:""},
   {name:"Irvine Valley Community College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"OC",tag:""},
   {name:"Saddleback Community College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"OC",tag:""},
-  {name:"Santa Ana College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"OC",tag:"",note:"Confirmed March 25 at 1:30 PM — part of Mark's solo March visit. Not on April trip."},
+  {name:"Santa Ana College",priority:"Low",day:null,dayLabel:"Mark's Visit · March",meeting:"—",region:"OC",tag:"",note:"Confirmed March 25 at 1:30 PM — part of Mark's solo March visit. Not on April trip."},
   {name:"Coast Community College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"OC",tag:""},
   {name:"Cypress",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"OC",tag:""},
   {name:"Fullerton",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"OC",tag:""},
