@@ -268,14 +268,12 @@ const DAYS = [
   {
     day:4, date:"Thu, Apr 17", region:"Central Valley → Inland Empire",
     optional:false,
-    summary:"Morning EBR at Clovis, then the longest single drive of the trip — roughly 3 hours south via CA-99 and CA-58 to the I-10 corridor. Extended lunch break before the Chaffey EBR. Day 4 is intentionally two meetings only given the transit distance.",
+    summary:"Morning EBR at Clovis, then the longest single drive of the trip — roughly 3 hours south via CA-99 and CA-58 to the I-10 corridor. Day 4 is intentionally one meeting given the transit distance — Chaffey is now covered by Mark's solo March visit (confirmed March 24).",
     night:"Overnight San Bernardino — SBVC and Crafton Hills are both within 25 min tomorrow morning.",
     timeline:[
       {type:"drive", from:"Fresno hotel", to:"Clovis Community College", duration:"15 min", via:"CA-168 E", arriveTime:"8:15 AM"},
       {type:"meeting", time:"8:30 AM", endTime:"10:30 AM", name:"Clovis Community College", priority:"Medium", meeting:"Executive Business Review", tag:"Competitive Threat", lat:36.8321, lng:-119.6846},
-      {type:"drive", from:"Clovis Community College", to:"Chaffey College (Rancho Cucamonga)", duration:"3 hrs + lunch break", via:"CA-99 S → CA-58 E → I-15 S → I-10 W", arriveTime:"~3:00 PM"},
-      {type:"meeting", time:"3:00 PM", endTime:"5:00 PM", name:"Chaffey College", priority:"Medium", meeting:"Executive Business Review", tag:"Competitive Threat", lat:34.1061, lng:-117.5961},
-      {type:"drive", from:"Chaffey College", to:"San Bernardino hotel", duration:"25 min", via:"I-10 E", arriveTime:"~5:25 PM"},
+      {type:"drive", from:"Clovis Community College", to:"San Bernardino hotel", duration:"~3 hrs", via:"CA-99 S → CA-58 E → I-10 E", arriveTime:"~1:30 PM"},
       {type:"overnight", note:"Overnight San Bernardino — three Inland Empire EBRs within close reach tomorrow."},
     ]
   },
@@ -326,7 +324,7 @@ const ALL_ACCOUNTS = [
   {name:"Madera College",priority:"Medium",day:3,dayLabel:"Day 3 · Wed Apr 16",meeting:"Check-in",region:"Central Valley",tag:"2027 Renewal"},
   // Day 4
   {name:"Clovis Community College",priority:"Medium",day:4,dayLabel:"Day 4 · Thu Apr 17",meeting:"EBR",region:"Central Valley",tag:"Deepen Relationship"},
-  {name:"Chaffey College",priority:"Medium",day:4,dayLabel:"Day 4 · Thu Apr 17",meeting:"EBR",region:"Inland Empire",tag:"Deepen Relationship",note:"Mark will visit end of March"},
+  {name:"Chaffey College",priority:"Medium",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"Inland Empire",tag:"Deepen Relationship",note:"Confirmed March 24 at 10 AM onsite — part of Mark's solo March visit. Not on April trip."},
   // Day 5
   {name:"San Bernardino Valley College",priority:"High",day:5,dayLabel:"Day 5 · Fri Apr 18",meeting:"EBR",region:"Inland Empire",tag:"Competitive Threat",note:"Mark will visit end of March"},
   {name:"Crafton Hills College",priority:"High",day:5,dayLabel:"Day 5 · Fri Apr 18",meeting:"EBR",region:"Inland Empire",tag:"Competitive Threat",note:"Mark will visit end of March"},
@@ -350,7 +348,7 @@ const ALL_ACCOUNTS = [
   {name:"Santa Barbara City College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"Central Coast",tag:""},
   {name:"Irvine Valley Community College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"OC",tag:""},
   {name:"Saddleback Community College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"OC",tag:""},
-  {name:"Santa Ana College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"OC",tag:"",note:"Mark will visit end of March"},
+  {name:"Santa Ana College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"OC",tag:"",note:"Confirmed March 25 at 1:30 PM — part of Mark's solo March visit. Not on April trip."},
   {name:"Coast Community College",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"OC",tag:""},
   {name:"Cypress",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"OC",tag:""},
   {name:"Fullerton",priority:"Low",day:null,dayLabel:"Not Scheduled",meeting:"—",region:"OC",tag:""},
