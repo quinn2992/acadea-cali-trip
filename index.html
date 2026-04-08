@@ -164,9 +164,9 @@ tr:hover td{background:rgba(255,255,255,.02);}
     <p>April 14–18, 2025 &nbsp;·&nbsp; Arrive SFO &nbsp;·&nbsp; Depart LAX &nbsp;·&nbsp; Mon–Fri &nbsp;·&nbsp; <span style="color:var(--medium);">+ Optional Day 6 (Mon Apr 21)</span></p>
   </div>
   <div class="tabs">
-    <button class="tab-btn active" data-tab="table">📋&nbsp; Accounts</button>
+    <button class="tab-btn active" data-tab="map">🗺&nbsp; Map <span class="wip-badge">WIP</span></button>
+    <button class="tab-btn" data-tab="table">📋&nbsp; Accounts</button>
     <button class="tab-btn" data-tab="itinerary">📅&nbsp; Itinerary <span class="wip-badge">WIP</span></button>
-    <button class="tab-btn" data-tab="map">🗺&nbsp; Map <span class="wip-badge">WIP</span></button>
   </div>
   <div class="header-legend">
     <div class="legend-item"><div class="dot High"></div>High — EBR</div>
@@ -175,7 +175,7 @@ tr:hover td{background:rgba(255,255,255,.02);}
   </div>
 </header>
 
-<div class="tab-panel active" id="tab-table">
+<div class="tab-panel" id="tab-table">
   <div class="table-toolbar">
     <input type="text" id="search-input" placeholder="Search school name…">
     <div class="filter-group">
@@ -210,7 +210,7 @@ tr:hover td{background:rgba(255,255,255,.02);}
   <div class="itin-inner" id="itin-inner"></div>
 </div>
 
-<div class="tab-panel" id="tab-map">
+<div class="tab-panel active" id="tab-map">
   <div id="map"></div>
   <div class="map-sidebar" id="map-sidebar"></div>
 </div>
